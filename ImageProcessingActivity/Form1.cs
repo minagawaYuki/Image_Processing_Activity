@@ -221,6 +221,7 @@ namespace ImageProcessingActivity
         {
             base.OnShown(e);
             StartWebcam();
+            var a = 1;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
