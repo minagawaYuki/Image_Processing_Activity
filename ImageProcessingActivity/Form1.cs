@@ -10,8 +10,8 @@ namespace ImageProcessingActivity
     public partial class Form1 : Form
     {
         Bitmap loaded, processed;
-        private FilterInfoCollection videoDevices; // Stores the available video devices
-        private VideoCaptureDevice videoSource; // Handles the selected video source
+        private FilterInfoCollection videoDevices;
+        private VideoCaptureDevice videoSource;
 
         public Form1()
         {
@@ -33,7 +33,7 @@ namespace ImageProcessingActivity
         {
             if (videoDevices.Count > 0)
             {
-                videoSource = new VideoCaptureDevice(videoDevices[0].MonikerString); // Select first webcam
+                videoSource = new VideoCaptureDevice(videoDevices[0].MonikerString);
                 videoSource.NewFrame += new NewFrameEventHandler(Video_NewFrame);
                 videoSource.Start();
                 toolStripStatusLabel1.Text = "Webcam started.";
@@ -44,7 +44,6 @@ namespace ImageProcessingActivity
             }
         }
 
-        // Stop webcam
         private void StopWebcam()
         {
             if (videoSource != null && videoSource.IsRunning)
@@ -56,11 +55,15 @@ namespace ImageProcessingActivity
             }
         }
 
-        // Event handler for processing each frame from the webcam
         private void Video_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
             Bitmap frame = (Bitmap)eventArgs.Frame.Clone();
-            pictureBox1.Image = frame; // Display the frame in pictureBox1
+            pictureBox1.Image = frame;
+        }
+
+        private void btnStartWebcam_Click(object sender, EventArgs e)
+        {
+            StartWebcam();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -82,7 +85,6 @@ namespace ImageProcessingActivity
             }
         }
 
-        // Update this method to process the image from the webcam
         private void grayscaleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image != null)
@@ -114,7 +116,7 @@ namespace ImageProcessingActivity
             if (pictureBox1.Image != null)
             {
                 processed = new Bitmap(pictureBox1.Image);
-                pictureBox2.Image = processed; // Simply copy the current frame to processed
+                pictureBox2.Image = processed;
             }
             else
             {
@@ -160,12 +162,13 @@ namespace ImageProcessingActivity
         {
             if (pictureBox1.Image != null)
             {
-                BasicDIP.Hist(ref loaded, ref processed);
+                Bitmap currentFrame = new Bitmap(pictureBox1.Image);
+                BasicDIP.Hist(currentFrame, ref processed);
                 pictureBox2.Image = processed;
             }
             else
             {
-                MessageBox.Show("No image to process. Please start the webcam or load an image.");
+                MessageBox.Show("No image available for histogram.");
             }
         }
 
@@ -214,11 +217,11 @@ namespace ImageProcessingActivity
             pictureBox1.Image = loaded;
         }
 
-        // Ensure to start/stop the webcam when the form is shown or hidden
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
             StartWebcam();
+            var a = 3;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
